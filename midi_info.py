@@ -3,7 +3,7 @@ from time import sleep
 
 import mido
 
-from pymprovisator.jazz import CHORD_ARPEGGIO
+from pymprovisator.music import CHORD_ARPEGGIO
 
 def play():
     output_names = mido.get_output_names()
