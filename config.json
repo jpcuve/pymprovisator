@@ -1,0 +1,1 @@
+{"preferredInstruments": {"bass": "Acoustic Bass", "piano": "Acoustic Grand Piano"}, "preferredVolumes": {"bass": 90, "piano": 90, "drums": 90}, "externalProgramPaths": {"abc2midi": "/path/to/abc2midi", "midiPlayer": "/path/to/a/midiplayer"}}
