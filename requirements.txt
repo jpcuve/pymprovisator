@@ -1,1 +1,2 @@
-ConfigParser
+mido
+python-rtmidi

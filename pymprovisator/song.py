@@ -9,6 +9,7 @@ from bass import BassLine
 from drums import DrumsLine
 from piano import PianoLine
 from pymprovisator.constants import generate_instrument_header, instrument_names, notes_abc, escale_notes
+from enum import Enum
 
 class Style:
     def __init__(self, name, meter, tempo_unit):
