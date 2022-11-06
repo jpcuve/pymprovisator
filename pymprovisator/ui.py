@@ -146,14 +146,14 @@ class MainWindow:
         # 2nd row: STYLE AND KEY
         self.style_label = Label(self.main_frame, text=_("Style"))
         self.style_label.grid(row=1, column=0, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
-        # self.style_option = apply(OptionMenu, (self.main_frame, self.var_style) + STYLES)
+        self.style_option = OptionMenu(self.main_frame, self.var_style, STYLES[0], *STYLES)
         # self.style_option.configure(width=10)
-        # self.style_option.grid(row=1, column=1, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
+        self.style_option.grid(row=1, column=1, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
         self.key_label = Label(self.main_frame, text=_("Key"))
         self.key_label.grid(row=1, column=2, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
-        # self.key_option = apply(OptionMenu, (self.main_frame, self.var_key) + KEYS)
+        self.key_option = OptionMenu(self.main_frame, self.var_key, KEYS[0], *KEYS)
         #~ self.key_option.configure(font=DEFAULT_FONT)
-        # self.key_option.grid(row=1, column=3, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
+        self.key_option.grid(row=1, column=3, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
         # 3rd row: INSTRUMENTS
         self.instruments_label = Label(self.main_frame, text=_("Instruments"))
         self.instruments_label.grid(row=2, column=0, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
