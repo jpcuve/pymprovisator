@@ -126,7 +126,7 @@ class PrefsWindow:
 
 
 class ChordsWindow:
-    def __init__(self, parent):
+    def __init__(self, parent, style_name):
         self.parent = parent
         #~ print self.parent.var_chords
         self.root = Toplevel()
@@ -134,7 +134,7 @@ class ChordsWindow:
         self.chords_frame = Frame(self.root, relief=DEFAULT_RELIEF, borderwidth=DEFAULT_BORDERWIDTH)
         self.buttons_frame = Frame(self.root, relief=DEFAULT_RELIEF, borderwidth=DEFAULT_BORDERWIDTH)
         self.cells = []
-        self.__create_chords_table()
+        self.__create_chords_table(style_name)
         self.__create_buttons()
         self.chords_frame.pack(side=TOP, fill=BOTH, expand=1, ipadx=DEFAULT_PAD, ipady=DEFAULT_PAD)
         self.buttons_frame.pack(side=TOP, fill=X, expand=1, ipadx=DEFAULT_PAD, ipady=DEFAULT_PAD)
@@ -142,8 +142,10 @@ class ChordsWindow:
         #~ self.buttons_frame.grid(row=1, column=0, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=E+W)
         self.root.grab_set()
         self.root.protocol('WM_DELETE_WINDOW', self.OnCancel)
-    def __create_chords_table(self):
-        style = eval('song.' + self.parent.var_style.get())
+    def __create_chords_table(self, style_name):
+        # style = eval('song.' + self.parent.var_style.get())
+        print(style_name)
+        style = next(iter([style for style in available_styles if style.name == style_name]), available_styles[0])
         self.root.title( _("Style: ") + style.name + _("  ---  Meter: ") + style.meter + _("  ---  Key: ") + self.parent.var_key.get())
         parts = int(style.meter[0])
         bars = int(self.parent.var_measures.get())

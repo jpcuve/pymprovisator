@@ -4,14 +4,19 @@
 # This program is free software. See the files LICENSE.TXT and README.TXT for more details
 # Written by David Asorey Álvarez (forodejazz@yahoo.es). Madrid (Spain). August 2003.
 
+import gettext
+import os
+import os.path
+import sys
+import webbrowser
 from tkinter import *
 from tkinter import messagebox, filedialog
 
+import preferences
+import ui_dialogs
+from constants import *
 from song import *
 from song_rw import *
-from constants import *
-import preferences, ui_dialogs
-import sys, os, os.path, webbrowser, gettext
 
 # Some constants
 APPLICATION = 'Pymprovisator 0.1.1'
@@ -33,9 +38,10 @@ else:
 
 _ = gettext.gettext
 
+
 class MainWindow:
     def __init__(self, song_file=None):
-        #Main application window:
+        # Main application window:
         self.root = Tk()
         # if PLATFORM == 'win32': self.root.option_readfile('modules/default_font_win32')
         # else: self.root.option_readfile('modules/default_font_unix')
@@ -50,9 +56,9 @@ class MainWindow:
         self.var_measures = StringVar()
         self.var_choruses = StringVar()
         # Other application variables
-        self.var_chords = [] #The chords aren't in any widget
+        self.var_chords = []  # The chords aren't in any widget
         self.last_dir = HOME_DIR
-        #Create all
+        # Create all
         self.__create_menus()
         self.__create_toolbar()
         self.__create_mainframe()
@@ -63,7 +69,8 @@ class MainWindow:
             self.__load_default_song_values()
         else:
             if not os.path.exists(song_file):
-                messagebox.showwarning(_("Loading song"), _("The song file '") + os.path.normpath(song_file) + _("' does not exists.\nThere isn't any song loaded now."))
+                messagebox.showwarning(_("Loading song"), _("The song file '") + os.path.normpath(song_file) + _(
+                    "' does not exists.\nThere isn't any song loaded now."))
                 self.Song = None
                 self.__load_default_song_values()
             else:
@@ -72,17 +79,19 @@ class MainWindow:
                     self.__read_song_values()
                     self.status_label.configure(text=_("Working on song file '") + os.path.normpath(song_file) + "'")
                 else:
-                    messagebox.showwarning(_("Loading song"), _("There was an error while reading the song file.\nPlease, check the song file '") + os.path.normpath(song_file) + _("'\nThere isn't any song loaded now."))
+                    messagebox.showwarning(_("Loading song"),
+                                           _("There was an error while reading the song file.\nPlease, check the song file '") + os.path.normpath(
+                                               song_file) + _("'\nThere isn't any song loaded now."))
                     self.Song = None
                     self.__load_default_song_values()
         self.root.title(APPLICATION)
         self.root.minsize(DEFAULT_SIZE[0], DEFAULT_SIZE[1])
         self.root.geometry(DEFAULT_POSITION)
-        #~ self.root.resizable(0, 0)  
+        # ~ self.root.resizable(0, 0)
         self.root.protocol('WM_DELETE_WINDOW', self.OnExit)
 
     def __create_menus(self):
-        #Menu bar:
+        # Menu bar:
         self.menu_bar = Menu(self.root, relief=DEFAULT_RELIEF)
         # "File" menu:
         self.menu_file = Menu(self.menu_bar, tearoff=0)
@@ -135,6 +144,13 @@ class MainWindow:
         self.exit_button = Button(self.toolbar_frame, image=self.image_clear, command=self.OnClear)
         self.exit_button.pack(side=LEFT)
 
+    def OnStyleChange(self, x):
+        print(f"Style change: {x}")
+
+    def OnKeyChange(self, x):
+        print(f"Key change: {x}")
+
+
     def __create_mainframe(self):
         self.main_frame = Frame(self.root, relief=DEFAULT_RELIEF, borderwidth=DEFAULT_BORDERWIDTH)
         self.main_frame.pack(side=TOP, fill=BOTH, expand=1, ipadx=DEFAULT_PAD, ipady=DEFAULT_PAD)
@@ -142,17 +158,17 @@ class MainWindow:
         self.title_label = Label(self.main_frame, text=_("Title"))
         self.title_label.grid(row=0, column=0, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
         self.title_entry = Entry(self.main_frame, textvariable=self.var_title, bg=DEFAULT_BACKGROUND)
-        self.title_entry.grid(row=0, column=1, columnspan=3, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=N+S+E+W)
+        self.title_entry.grid(row=0, column=1, columnspan=3, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=N + S + E + W)
         # 2nd row: STYLE AND KEY
         self.style_label = Label(self.main_frame, text=_("Style"))
         self.style_label.grid(row=1, column=0, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
-        self.style_option = OptionMenu(self.main_frame, self.var_style, STYLES[0], *STYLES)
+        self.style_option = OptionMenu(self.main_frame, self.var_style, STYLES[0], *STYLES, command=self.OnStyleChange)
         # self.style_option.configure(width=10)
         self.style_option.grid(row=1, column=1, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
         self.key_label = Label(self.main_frame, text=_("Key"))
         self.key_label.grid(row=1, column=2, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
-        self.key_option = OptionMenu(self.main_frame, self.var_key, KEYS[0], *KEYS)
-        #~ self.key_option.configure(font=DEFAULT_FONT)
+        self.key_option = OptionMenu(self.main_frame, self.var_key, KEYS[0], *KEYS, command=self.OnKeyChange)
+        # ~ self.key_option.configure(font=DEFAULT_FONT)
         self.key_option.grid(row=1, column=3, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
         # 3rd row: INSTRUMENTS
         self.instruments_label = Label(self.main_frame, text=_("Instruments"))
@@ -167,7 +183,7 @@ class MainWindow:
         self.tempo_label = Label(self.main_frame, text=_("Tempo"))
         self.tempo_label.grid(row=3, column=0, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
         self.tempo_scale = Scale(self.main_frame, from_=30, to=350, orient=HORIZONTAL, variable=self.var_tempo)
-        self.tempo_scale.grid(row=3, column=1, columnspan=3, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=N+S+E+W)
+        self.tempo_scale.grid(row=3, column=1, columnspan=3, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=N + S + E + W)
         # 5th row: MEASURES AND CHORUSES
         self.measures_label = Label(self.main_frame, text=_("Measures"))
         self.measures_label.grid(row=4, column=0, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
@@ -177,12 +193,12 @@ class MainWindow:
         self.choruses_label.grid(row=4, column=2, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
         self.choruses_entry = Entry(self.main_frame, textvariable=self.var_choruses, width=5, bg=DEFAULT_BACKGROUND)
         self.choruses_entry.grid(row=4, column=3, padx=DEFAULT_PAD, pady=DEFAULT_PAD, sticky=W)
-        
+
     def __create_statusbar(self):
         self.status_frame = Frame(self.root, relief=DEFAULT_RELIEF, borderwidth=DEFAULT_BORDERWIDTH)
         self.status_frame.pack(side=TOP, fill=X)
-        self.status_label = Label(self.status_frame, text= _("Welcome to ") + APPLICATION + _(". No song loaded."), 
-                                    justify=LEFT)
+        self.status_label = Label(self.status_frame, text=_("Welcome to ") + APPLICATION + _(". No song loaded."),
+                                  justify=LEFT)
         self.status_label.pack(side=LEFT, fill=X, padx=1, pady=1, ipadx=2, ipady=2)
 
     def __load_default_song_values(self):
@@ -197,6 +213,7 @@ class MainWindow:
         self.var_choruses.set(3)
         self.var_chords = []
         self.status_label.configure(text=_("Welcome to ") + APPLICATION + _(". No song loaded."))
+
     def __read_song_values(self):
         self.var_title.set(self.Song.title)
         self.var_key.set(self.Song.key)
@@ -208,8 +225,8 @@ class MainWindow:
         self.var_measures.set(self.Song.n_bars)
         self.var_choruses.set(self.Song.n_choruses)
         self.var_chords = self.Song.chord_seq
-        #~ print self.var_chords
-    
+        # ~ print self.var_chords
+
     def __check_values(self):
         self.input_instruments = []
         if self.var_piano.get(): self.input_instruments.append('piano')
@@ -223,9 +240,9 @@ class MainWindow:
             int(self.var_choruses.get())
         except:
             return (0, _("You must supply an numerical value in choruses."))
-        if int(self.var_measures.get()) < 1 :
+        if int(self.var_measures.get()) < 1:
             return (0, _("You must supply an numerical value in measures greater than zero."))
-        if int(self.var_choruses.get()) < 1 :
+        if int(self.var_choruses.get()) < 1:
             return (0, _("You must supply an numerical value in choruses greater than zero."))
         if self.var_title.get().strip().replace(' ', '') == '':
             return (0, _("You must supply the song's title."))
@@ -239,89 +256,107 @@ class MainWindow:
             return (0, _("You must supply the song's instruments."))
         return (1, '')
 
-# Handlers:
+    # Handlers:
     def OnNew(self):
         if self.Song:
-            if messagebox.askyesno(_("New song"), _("If you haven't saved your song, your work will be lost.\nAre you sure?")):
+            if messagebox.askyesno(_("New song"),
+                                   _("If you haven't saved your song, your work will be lost.\nAre you sure?")):
                 self.__load_default_song_values()
                 self.Song = None
                 return
 
     def OnOpen(self):
         if self.Song:
-            if not messagebox.askyesno(_("Open song"), _("If you haven't saved your song, your work will be lost.\nAre you sure?")):
+            if not messagebox.askyesno(_("Open song"),
+                                       _("If you haven't saved your song, your work will be lost.\nAre you sure?")):
                 self.Song = None
                 return
-        file = filedialog.askopenfilename(title = _("Open song"), filetypes=[(_("Pymprovisator songs"), "*.ymp"), (_("All files"), "*")], initialdir=self.last_dir)
+        file = filedialog.askopenfilename(title=_("Open song"),
+                                          filetypes=[(_("Pymprovisator songs"), "*.ymp"), (_("All files"), "*")],
+                                          initialdir=self.last_dir)
         if not file: return
-        self.last_dir = os.path.dirname(file) 
+        self.last_dir = os.path.dirname(file)
         self.Song = load_song(file)
         if self.Song:
             self.__read_song_values()
             self.status_label.configure(text=_("Working on song file '") + os.path.normpath(file) + "'")
         else:
-            messagebox.showwarning(_("Loading song"), _("There was an error while reading the song file.\nPlease, check the song file '") + os.path.normpath(file) + _("'\nThere isn't any song loaded now."))
+            messagebox.showwarning(_("Loading song"),
+                                   _("There was an error while reading the song file.\nPlease, check the song file '") + os.path.normpath(
+                                       file) + _("'\nThere isn't any song loaded now."))
             self.Song = None
             self.__load_default_song_values()
 
     def OnSave(self):
         validation = self.__check_values()
         if not validation[0]:
-            messagebox.showwarning(_("Saving song"), _("There was an error while saving the song file:\n") + validation[1])
+            messagebox.showwarning(_("Saving song"),
+                                   _("There was an error while saving the song file:\n") + validation[1])
             return
         destination = self.var_title.get().title().replace(' ', '')
         try:
-            self.Song = Song(destination, self.var_title.get(), 
-                         self.var_tempo.get(), self.var_key.get(),
-                         eval('song.' + self.var_style.get()), self.var_chords, 
-                         self.var_measures.get(), self.var_choruses.get(), self.input_instruments)
+            self.Song = Song(destination, self.var_title.get(),
+                             self.var_tempo.get(), self.var_key.get(),
+                             eval('song.' + self.var_style.get()), self.var_chords,
+                             self.var_measures.get(), self.var_choruses.get(), self.input_instruments)
         except MyException as e:
             messagebox.showwarning(_("Error"), _("There was some error generating the song:\n") + str(e) + \
-            _("\nPlease, check your song settings and chord sequence.") )
+                                   _("\nPlease, check your song settings and chord sequence."))
             self.Song = None
             return
-        file = filedialog.asksaveasfilename(title = _("Save song"), filetypes=[(_("Pymprovisator songs"), "*.ymp"), (_("All files"), "*")],
-                                              initialdir=self.last_dir, 
-                                              initialfile= destination + '.ymp')
+        file = filedialog.asksaveasfilename(title=_("Save song"),
+                                            filetypes=[(_("Pymprovisator songs"), "*.ymp"), (_("All files"), "*")],
+                                            initialdir=self.last_dir,
+                                            initialfile=destination + '.ymp')
         if file:
-            self.last_dir = os.path.dirname(file) 
+            self.last_dir = os.path.dirname(file)
             if not save_song(file, self.Song):
-                messagebox.showwarning(_("Saving song"), _("There was some error saving the song.\nPlease, check the file name provided and/or your permisions in that directory."))
+                messagebox.showwarning(_("Saving song"),
+                                       _("There was some error saving the song.\nPlease, check the file name provided and/or your permisions in that directory."))
                 self.Song = None
                 return
 
     def OnExit(self):
         if self.Song:
-            if messagebox.askyesno(_("Exit"), _("If you haven't saved your song, your work will be lost.\nAre you sure?")):
+            if messagebox.askyesno(_("Exit"),
+                                   _("If you haven't saved your song, your work will be lost.\nAre you sure?")):
                 self.root.quit()
         else:
-                self.root.quit()
-    def OnChords(self): ui_dialogs.ChordsWindow(self)
-    def OnClear(self): 
+            self.root.quit()
+
+
+    def OnChords(self):
+        ui_dialogs.ChordsWindow(self, self.var_style.get())
+
+    def OnClear(self):
         if messagebox.askyesno(_("Clear chords"), _("The chords will be erased.\nAre you sure?")):
             self.var_chords = []
+
     def OnPlay(self):
         validation = self.__check_values()
         if not validation[0]:
-            messagebox.showwarning(_("Playing song"), _("There was an error while generating the song file:\n") + validation[1])
+            messagebox.showwarning(_("Playing song"),
+                                   _("There was an error while generating the song file:\n") + validation[1])
             return
         abc2midi = preferences.get_external_prog_path('ABC2MIDI')
         midiplayer = preferences.get_external_prog_path('MIDIPLAYER')
         if not abc2midi:
-            messagebox.showwarning(_("abc2midi program not found"), _("Please, check your preferences file (") + preferences.preferences_file + ")")
+            messagebox.showwarning(_("abc2midi program not found"),
+                                   _("Please, check your preferences file (") + preferences.preferences_file + ")")
             return
         if not midiplayer:
-            messagebox.showwarning(_("MIDI player program not found"), _("Please, check your preferences file (") + preferences.preferences_file + ")")
+            messagebox.showwarning(_("MIDI player program not found"),
+                                   _("Please, check your preferences file (") + preferences.preferences_file + ")")
             return
         try:
             destination = self.var_title.get().title().replace(' ', '')
-            self.Song = Song(destination, self.var_title.get(), 
-                            self.var_tempo.get(), self.var_key.get(),
-                            eval('song.' + self.var_style.get()), self.var_chords, 
-                            self.var_measures.get(), self.var_choruses.get(), self.input_instruments)
+            self.Song = Song(destination, self.var_title.get(),
+                             self.var_tempo.get(), self.var_key.get(),
+                             eval('song.' + self.var_style.get()), self.var_chords,
+                             self.var_measures.get(), self.var_choruses.get(), self.input_instruments)
         except MyException as e:
             messagebox.showwarning(_("Error"), _("There was some error generating the song:\n") + str(e) + \
-                _("\nPlease, check your song settings and chord sequence.") )
+                                   _("\nPlease, check your song settings and chord sequence."))
             self.Song = None
             return
         final = self.Song.generate_song(preferences.get_prefered_instruments())
@@ -338,16 +373,24 @@ class MainWindow:
         print(f"Should do: {command}")
         # popen2.popen2(command)
         return
-    def OnPrefs(self): ui_dialogs.PrefsWindow(self)
-    def OnAbout(self): 
-        messagebox.showinfo(_("About ") + APPLICATION , APPLICATION  + _(" was written by David Asorey Álvarez (forodejazz@yahoo.es)\nThis program is free software.\nSee the files README.txt and LICENSE.txt for more details.\nThanks for using ") + APPLICATION + "!")
+
+    def OnPrefs(self):
+        ui_dialogs.PrefsWindow(self)
+
+    def OnAbout(self):
+        messagebox.showinfo(_("About ") + APPLICATION, APPLICATION + _(
+            " was written by David Asorey Álvarez (forodejazz@yahoo.es)\nThis program is free software.\nSee the files README.txt and LICENSE.txt for more details.\nThanks for using ") + APPLICATION + "!")
+
     def OnAvailableChords(self):
         messagebox.showinfo(_("Available chords"), available_chords)
+
     def OnManual(self):
         url = 'file://' + os.path.abspath("doc/index.html")
         webbrowser.open(url)
+
     def run(self):
         self.root.mainloop()
+
 
 def main(song_file=None):
     if song_file:
@@ -355,8 +398,8 @@ def main(song_file=None):
     app = MainWindow(song_file)
     app.run()
 
-if __name__ == '__main__': 
+
+if __name__ == '__main__':
     os.chdir('..')
     app = MainWindow()
     app.run()
-    
