@@ -2,9 +2,9 @@ from typing import List
 
 
 class Rhythm:
-    def __init__(self, name, meter, tempo_unit):
+    def __init__(self, name: str, meter: str, tempo_unit: str):
         self.name = name
-        self.meter = meter
+        self.meter = meter  # mesure
         self.tempo_unit = tempo_unit
 
     def piano_line(self) -> List[str]:

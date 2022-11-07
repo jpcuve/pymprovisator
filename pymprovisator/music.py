@@ -3,41 +3,26 @@ VALID_KEYS = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#',
               'Cm', 'C#m', 'Dbm', 'Dm', 'D#m', 'Ebm', 'Em', 'Fm', 'F#m',
               'Gbm', 'Gm', 'G#m', 'Abm', 'Am', 'A#m', 'Bbm', 'Bm']
 
-# Relations scale-chord (follows "The Jazz Theory Book" from M.Levine)
-SCALE_CHORDS = {
-    'ionian_chords': ('M', '6', 'maj7', 'maj9', 'maj13'),
-    'dorian_chords': ('m', 'm6', 'm7', 'm9', 'm11'),
-    'phrygian_chords': ('susb9',),
-    'lydian_chords': ('#11', 'maj7#11'),
-    'mixolydian_chords': ('7', '9', '13'),
-    'mixolydian_sus_chords': ('11', 'sus', 'sus7', 'sus9', 'sus13'),
-    'aeolian_chords': ('mb6', 'm7b6'),
-    'locrian_chords': ('m7b5',),
-    'minor_major_chords': ('mmaj7', 'mmaj9'),
-    'lydian_augmented_chords': ('maj7+5', '+maj7'),
-    'lydian_dominant_chords': ('7#11', '9#11', '13#11'),
-    'altered_chords': ('alt', '7alt'),
-    'augmented_chords': ('+', '+7'),
-    'diminished_chords': ('º', 'º7', 'dism'),
-    'diminished_inv_chords': ('7b9', '7#9', '7b5')
-}
+VALID_NOTES = []
 
-SCALE_NOTES = {
-    'ionian': (0, 2, 4, 5, 7, 9, 11),
-    'dorian': (0, 2, 3, 5, 7, 9, 10),
-    'phrygian': (0, 1, 3, 5, 7, 8, 10),
-    'lydian': (0, 2, 4, 6, 7, 9, 11),
-    'mixolydian': (0, 2, 4, 5, 7, 9, 10),
-    'mixolydian_sus': (0, 2, 4, 5, 7, 9, 10),
-    'aeolian': (0, 2, 3, 5, 7, 8, 10),
-    'locrian': (0, 1, 3, 5, 6, 8, 10),
-    'minor_major': (0, 2, 3, 5, 7, 9, 11),
-    'lydian_augmented': (0, 2, 4, 6, 8, 9, 11),
-    'lydian_dominant': (0, 2, 4, 6, 7, 9, 10),
-    'altered': (0, 1, 3, 4, 6, 8, 10),
-    'augmented': (0, 2, 4, 6, 8, 10),
-    'diminished': (0, 1, 3, 4, 6, 7, 9, 10),
-    'diminished_inv': (0, 2, 3, 5, 6, 8, 9, 11),
+# Relations scale-chord (follows "The Jazz Theory Book" from M.Levine)
+
+SCALES = {
+    'ionian': ((0, 2, 4, 5, 7, 9, 11), ('M', '6', 'maj7', 'maj9', 'maj13')),
+    'dorian': ((0, 2, 3, 5, 7, 9, 10), ('m', 'm6', 'm7', 'm9', 'm11')),
+    'phrygian': ((0, 1, 3, 5, 7, 8, 10), ('susb9',)),
+    'lydian': ((0, 2, 4, 6, 7, 9, 11), ('#11', 'maj7#11')),
+    'mixolydian': ((0, 2, 4, 5, 7, 9, 10), ('7', '9', '13')),
+    'mixolydian_sus': ((0, 2, 4, 5, 7, 9, 10), ('11', 'sus', 'sus7', 'sus9', 'sus13')),
+    'aeolian': ((0, 2, 3, 5, 7, 8, 10), ('mb6', 'm7b6')),
+    'locrian': ((0, 1, 3, 5, 6, 8, 10), ('m7b5',)),
+    'minor_major': ((0, 2, 3, 5, 7, 9, 11), ('mmaj7', 'mmaj9')),
+    'lydian_augmented': ((0, 2, 4, 6, 8, 9, 11), ('maj7+5', '+maj7')),
+    'lydian_dominant': ((0, 2, 4, 6, 7, 9, 10), ('7#11', '9#11', '13#11')),
+    'altered': ((0, 1, 3, 4, 6, 8, 10), ('alt', '7alt')),
+    'augmented': ((0, 2, 4, 6, 8, 10), ('+', '+7')),
+    'diminished': ((0, 1, 3, 4, 6, 7, 9, 10), ('º', 'º7', 'dism')),
+    'diminished_inv': ((0, 2, 3, 5, 6, 8, 9, 11), ('7b9', '7#9', '7b5')),
 }
 
 CHORD_ARPEGGIO = {

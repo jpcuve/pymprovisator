@@ -3,6 +3,7 @@ from time import sleep
 
 import mido
 
+from pymprovisator.chord import Chord
 from pymprovisator.music import CHORD_ARPEGGIO
 
 def play():
@@ -29,11 +30,18 @@ if __name__ == '__main__':
     channel = 1
     chords = [(4, 60, '7'), (2, 62, 'm7'), (2, 67, '7alt'), (4, 60, 'm7'), (4, 65, '7'), (8, 70, 'maj7#11')]
     tempo = 0.3
-    for duration, note, chord in chords:
-        arpeggio = CHORD_ARPEGGIO.get(chord)
+    for duration, note, scale in chords:
+        arpeggio = CHORD_ARPEGGIO.get(scale)
         for offset in arpeggio:
             outport.send(mido.Message('note_on', channel=channel, note=note + offset, velocity=100))
         sleep(tempo * duration)
         for offset in arpeggio:
             outport.send(mido.Message('note_off', channel=channel, note=note + offset))
+    for duration, note, scale in chords:
+        chord = Chord(note, scale)
+        for n in chord.arpeggio:
+            outport.send(mido.Message('note_on', channel=channel, note=n, velocity=100))
+        sleep(tempo * duration)
+        for n in chord.arpeggio:
+            outport.send(mido.Message('note_off', channel=channel, note=n))
 
