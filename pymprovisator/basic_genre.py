@@ -1,7 +1,7 @@
-from pymprovisator.rhythm import Rhythm
+from pymprovisator.genre import Genre
 
 
-class BasicRhythm(Rhythm):
+class BasicGenre(Genre):
     def __init__(self):
         super().__init__('basic', '4/4', '4')
 

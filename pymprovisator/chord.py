@@ -3,7 +3,6 @@
 # Pymprovisator v. 0.1.1
 # This program is free software. See the files LICENSE.TXT and README.TXT for more details
 # Written by David Asorey Álvarez (forodejazz@yahoo.es). Madrid (Spain). August 2003.
-from typing import List
 
 # from constants import *
 from pymprovisator.music import CHORD_ARPEGGIO, SCALES
@@ -15,15 +14,9 @@ class Chord:
     def __init__(self, root: int, chord_type: str):
         self.root = root
         self.id = chord_type
-
-    @property
-    def scale(self) -> List[int]:
         notes = next(iter(t[0] for t in SCALES.values() if self.id in t[1]), ())
-        return [n + self.root for n in notes]
-
-    @property
-    def arpeggio(self) -> List[int]:
-        return [n + self.root for n in CHORD_ARPEGGIO.get(self.id, [])]
+        self.scale = [n + self.root for n in notes]
+        self.arpeggio = [n + self.root for n in CHORD_ARPEGGIO.get(self.id, [])]
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.root}, "{self.id}")'

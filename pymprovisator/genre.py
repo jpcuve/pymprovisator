@@ -1,7 +1,7 @@
 from typing import List
 
 
-class Rhythm:
+class Genre:
     def __init__(self, name: str, meter: str, tempo_unit: str):
         self.name = name
         self.meter = meter  # mesure
