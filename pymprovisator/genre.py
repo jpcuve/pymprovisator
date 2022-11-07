@@ -1,5 +1,8 @@
 from typing import List
 
+from pymprovisator.track import Track
+from pymprovisator.tune import Tune
+
 
 class Genre:
     def __init__(self, name: str, meter: str, tempo_unit: str):
@@ -7,11 +10,11 @@ class Genre:
         self.meter = meter  # mesure
         self.tempo_unit = tempo_unit
 
-    def piano_line(self) -> List[str]:
+    def piano_line(self, tune: Tune) -> Track:
         raise NotImplemented
 
-    def bass_line(self) -> List[str]:
+    def bass_line(self, tune: Tune) -> Track:
         raise NotImplemented
 
-    def drum_line(self) -> List[str]:
+    def drum_line(self, tune: Tune) -> Track:
         raise NotImplemented
