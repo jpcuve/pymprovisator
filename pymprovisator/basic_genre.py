@@ -1,4 +1,4 @@
-from pymprovisator.abc import NOTES
+from pymprovisator.util_abc import NOTES
 from pymprovisator.genre import Genre
 from pymprovisator.track import Track
 from pymprovisator.tune import Tune

@@ -1,3 +1,4 @@
+import itertools
 from dataclasses import dataclass
 from time import sleep
 from typing import List
@@ -28,22 +29,12 @@ class Tune:
     def walking_pattern(self, sample_position: int, meter: int) -> List[int]:
         sample = self.samples[sample_position % len(self.samples)]
         next_sample = self.samples[(sample_position + 1) % len(self.samples)]
-        pattern = PATTERNS[sample.chord.get_distance(next_sample.chord)]
-        if sample.duration == 1:
-            return [sample.chord.root]
-        elif 2 <= sample.duration <= 10:
-            return [sample.chord.scale[i - 1] for i in pattern[sample.duration - 2]]
-        else:
-            raise NotImplementedError
-            # aux = ''
-            # multiplier, parts2 = split_long_chord(parts, meter)
-            # aux += multiplier * (
-            #     ' '.join([notes_abc[base_note + escale_notes[chord.type][i - 1]] for i in pattern[meter - 2]]))
-            # if parts2 == 1:
-            #     aux += notes_abc[base_note] + ' '
-            # elif 2 <= parts2 <= 10:
-            #     aux += ' '.join([notes_abc[base_note + escale_notes[chord.type][i - 1]] for i in pattern[parts2 - 2]])
-            # return aux
+        patterns = PATTERNS[sample.chord.get_distance(next_sample.chord)]
+        # It is possible that the sample duration exceeds the maximum number of indexes in the patterns
+        lengths = [len(patterns)] * (sample.duration // len(patterns)) + [sample.duration % len(patterns)]
+        pattern = list(itertools.chain.from_iterable([list(patterns[length - 1]) for length in lengths]))
+        assert len(pattern) == sample.duration
+        return [sample.chord.scale[index_in_chord - 1] for index_in_chord in pattern]
 
     def compute_chord_track(self) -> Track:
         track = Track()
@@ -75,7 +66,7 @@ class Tune:
 
 if __name__ == '__main__':
     tune = Tune('Some test', 120, 'G', [
-        Sample(4, Chord(60, '7')),
+        Sample(12, Chord(60, '7')),
         Sample(2, Chord(62, 'm7')),
         Sample(2, Chord(67, '7alt')),
         Sample(4, Chord(60, 'm7')),
