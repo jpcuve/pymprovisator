@@ -25,4 +25,7 @@ class Track:
                 messages[when + note.duration].append(mido.Message('note_off', channel=channel, note=note.pitch))
         return messages
 
+    def to_abc(self):
+        raise NotImplementedError
+
 
