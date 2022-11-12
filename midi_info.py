@@ -33,6 +33,7 @@ def play_track(midi_outport):
         sleep(tempo)
 
 
+
 if __name__ == '__main__':
     # test from original
     # chords = ['4C7', '2Dm7', '2G7alt', '4Cm7', '4F7', '8Bbmaj7#11']

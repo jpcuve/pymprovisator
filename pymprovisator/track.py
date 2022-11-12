@@ -1,9 +1,14 @@
-from collections import defaultdict, namedtuple
+from collections import defaultdict
+from dataclasses import dataclass
 from typing import List, DefaultDict
 
 import mido
 
-Note = namedtuple('Note', ['pitch', 'duration'])
+
+@dataclass
+class Note:
+    pitch: int
+    duration: int
 
 
 class Track:
@@ -27,5 +32,3 @@ class Track:
 
     def to_abc(self):
         raise NotImplementedError
-
-
