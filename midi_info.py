@@ -52,11 +52,10 @@ def play_track(outport):
     # then we play the track
     channel = 1
     tempo = 0.3
+    midi = track.to_midi(channel)
     for tick in range(time):
-        for n in track.note_on[tick]:
-            outport.send(mido.Message('note_on', channel=channel, note=n, velocity=100))
-        for n in track.note_off[tick]:
-            outport.send(mido.Message('note_off', channel=channel, note=n))
+        for message in midi[tick]:
+            outport.send(message)
         sleep(tempo)
 
 
