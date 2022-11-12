@@ -45,29 +45,36 @@ class Tune:
             #     aux += ' '.join([notes_abc[base_note + escale_notes[chord.type][i - 1]] for i in pattern[parts2 - 2]])
             # return aux
 
-    def play_samples(self, midi_outport, channel: int):
+    def compute_chord_track(self) -> Track:
         track = Track()
         time = 0
         for sample in self.samples:
             track.punch_chord(sample.chord.arpeggio, time, sample.duration)
             time += sample.duration
-        # then we play the track
-        tempo = 0.3
-        midi = track.to_midi(channel)
-        for tick in range(time):
-            for message in midi[tick]:
-                midi_outport.send(message)
-            sleep(tempo)
+        return track
 
-    def play_walking_pattern(self, midi_outport, channel: int):
+    def compute_walking_track(self) -> Track:
         track = Track()
         time = 0
+        for sample_index in range(len(self.samples)):
+            walking_pattern = self.walking_pattern(sample_index, 0)
+            for pitch in walking_pattern:
+                track.punch_chord([pitch], time, 1)
+                time += 1
+        return track
 
-
+    def play_tracks(self, tracks: List[Track], midi_outport, channel: int):
+        tempo = 0.3
+        midis = [track.to_midi(channel) for track in tracks]
+        for tick in range(max([track.total_duration for track in tracks])):
+            for midi in midis:
+                for message in midi[tick]:
+                    midi_outport.send(message)
+            sleep(tempo)
 
 
 if __name__ == '__main__':
-    tune = Tune('Some test', 120, 'G',  [
+    tune = Tune('Some test', 120, 'G', [
         Sample(4, Chord(60, '7')),
         Sample(2, Chord(62, 'm7')),
         Sample(2, Chord(67, '7alt')),
@@ -75,6 +82,7 @@ if __name__ == '__main__':
         Sample(4, Chord(65, '7')),
         Sample(8, Chord(70, 'maj7#11')),
     ], 20, 4)
+    tracks = [tune.compute_chord_track(), tune.compute_walking_track()]
     output_names = mido.get_output_names()
     outport = mido.open_output(output_names[0])
-    tune.play_samples(outport, 1)
+    tune.play_tracks(tracks, outport, 1)
