@@ -10,16 +10,21 @@ from pymprovisator.music import CHORD_ARPEGGIO, SCALES
 
 class Chord:
     OFFSETS = {'G': 55, 'A': 57, 'B': 59, 'C': 60, 'D': 62, 'E': 64, 'F': 65}
+    DISTANCES = ['unison', '2nd', '2nd', '3rd', '3rd', '4th', '5th', '5th', '6th', '6th', '7th', '7th']
 
     def __init__(self, root: int, chord_type: str):
         self.root = root
         self.id = chord_type
         notes = next(iter(t[0] for t in SCALES.values() if self.id in t[1]), ())
-        self.scale = [n + self.root for n in notes]
-        self.arpeggio = [n + self.root for n in CHORD_ARPEGGIO.get(self.id, [])]
+        self.scale = [self.root + n for n in notes]
+        self.arpeggio = [self.root + n for n in CHORD_ARPEGGIO.get(self.id, [])]
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.root}, "{self.id}")'
+
+    def get_distance(self, chord: 'Chord') -> str:
+        distance = abs(self.root - chord.root) % 12 if chord is not None else 0
+        return Chord.DISTANCES[distance]
 
     @staticmethod
     def parse(name: str):

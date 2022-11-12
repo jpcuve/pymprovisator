@@ -1,32 +1,45 @@
-from typing import List, Tuple
+from dataclasses import dataclass
+from typing import List
 
 from pymprovisator.chord import Chord
+from pymprovisator.music import PATTERNS
+
+
+@dataclass
+class Sample:
+    duration: int
+    chord: Chord
 
 
 class Tune:
-    def __init__(self, title: str, tempo: int, key: str, chords: List[Tuple[int, Chord]],
+    def __init__(self, title: str, tempo: int, key: str, samples: List[Sample],
                  bar_count: int, chorus_count: int):
         self.title = title
         self.tempo = tempo
         self.key = key
-        self.chords = chords
+        self.samples = samples
         self.bar_count = bar_count
         self.chorus_count = chorus_count
 
-    def to_abc(self):
-        lines = ['<score lang="ABC">']
-        lines.extend([f'{k}:{v}' for k, v in {
-            'X': 1,
-            'T': self.title,
-            'M': self.genre.meter,
-            'L': f'1/{self.genre.tempo_unit}',
-            'Q': f'1/{self.genre.tempo_unit}={self.tempo}',
-            'R': self.genre.name,
-            'K': self.key,
-        }.items()])
-        # append tune
-        lines.append('</score>')
-        return '\n'.join(lines)
+    def walking_pattern(self, sample_position: int, parts: int, meter: int) -> List[int]:
+        sample = self.samples[sample_position % len(self.samples)]
+        next_sample = self.samples[(sample_position + 1) % len(self.samples)]
+        pattern = PATTERNS[sample.chord.get_distance(next_sample.chord)]
+        if parts == 1:
+            return [sample.chord.root]
+        elif 2 <= parts <= 10:
+            return [sample.chord.scale[i - 1] for i in pattern[parts - 2]]
+        else:
+            raise NotImplementedError
+            # aux = ''
+            # multiplier, parts2 = split_long_chord(parts, meter)
+            # aux += multiplier * (
+            #     ' '.join([notes_abc[base_note + escale_notes[chord.type][i - 1]] for i in pattern[meter - 2]]))
+            # if parts2 == 1:
+            #     aux += notes_abc[base_note] + ' '
+            # elif 2 <= parts2 <= 10:
+            #     aux += ' '.join([notes_abc[base_note + escale_notes[chord.type][i - 1]] for i in pattern[parts2 - 2]])
+            # return aux
 
 
 if __name__ == '__main__':
