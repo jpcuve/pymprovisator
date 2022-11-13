@@ -6,7 +6,7 @@ from pymprovisator.tune import Tune
 
 class BasicGenre(Genre):
     def __init__(self):
-        super().__init__('basic', '4/4', '4')
+        super().__init__('basic', 4, 4, '4')
 
     def piano_line(self, tune: Tune) -> Track:
         return super().piano_line()

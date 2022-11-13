@@ -31,8 +31,8 @@ class Tune:
         next_sample = self.samples[(sample_position + 1) % len(self.samples)]
         patterns = PATTERNS[sample.chord.get_distance(next_sample.chord)]
         # It is possible that the sample duration exceeds the maximum number of indexes in the patterns
-        q, r = divmod(sample.duration, len(patterns))
-        lengths = [len(patterns)] * q + [r]
+        q, r = divmod(sample.duration, meter)
+        lengths = [meter] * q + ([r] if r > 0 else [])
         pattern = list(itertools.chain.from_iterable([iter(patterns[length - 1]) for length in lengths]))
         assert len(pattern) == sample.duration
         return [sample.chord.scale[index_in_chord - 1] for index_in_chord in pattern]
@@ -49,7 +49,7 @@ class Tune:
         track = Track()
         time = 0
         for sample_index in range(len(self.samples)):
-            walking_pattern = self.walking_pattern(sample_index, 0)
+            walking_pattern = self.walking_pattern(sample_index, 4)
             for pitch in walking_pattern:
                 track.punch_chord([pitch], time, 1)
                 time += 1
@@ -67,7 +67,7 @@ class Tune:
 
 if __name__ == '__main__':
     tune = Tune('Some test', 120, 'G', [
-        Sample(12, Chord(60, '7')),
+        Sample(8, Chord(60, '7')),
         Sample(2, Chord(62, 'm7')),
         Sample(2, Chord(67, '7alt')),
         Sample(4, Chord(60, 'm7')),
